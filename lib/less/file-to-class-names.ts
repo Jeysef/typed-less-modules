@@ -1,82 +1,95 @@
+import {
+  camelCase,
+  camelCaseTransformMerge,
+  paramCase,
+  snakeCase,
+} from "change-case";
 import fs from "fs";
+import { render } from "less";
+import { MainOptions } from "lib/core";
 import path from "path";
-import less from "less";
-import camelcase from "camelcase";
-import { paramCase } from "param-case";
-
+import slash from "slash";
+import LessAliasesPlugin from "./aliases-plugin";
 import { sourceToClassNames } from "./source-to-class-names";
-import { LessAliasesPlugin } from "./aliases-plugin";
-import { MainOptions } from "../core";
 
 export type ClassName = string;
-export type ClassNames = ClassName[];
 
 type AliasesFunc = (filePath: string) => string;
-export type Aliases = Record<string, string | string[] | AliasesFunc>;
-
-export type NameFormat = "camel" | "kebab" | "param" | "dashes" | "none";
-
-export interface Options {
-  includePaths?: string[];
-  aliases?: Aliases;
-  nameFormat?: NameFormat;
-}
-
-export const NAME_FORMATS: NameFormat[] = [
-  "camel",
-  "kebab",
-  "param",
-  "dashes",
-  "none"
-];
-
-export const nameFormatDefault: NameFormat = "camel";
-export const configFilePathDefault: string = "tlm.config.js";
-
-// Options 这里实际上传递的是 MainOptions
-export const fileToClassNames = async (
-  file: string,
-  options: Options = {} as MainOptions
-): Promise<ClassNames> => {
-  // options
-  const aliases = options.aliases || {};
-  const includePaths = options.includePaths || [];
-  const nameFormat = options.nameFormat || "camel";
-  const lessRenderOptions = (options as MainOptions).lessRenderOptions || {};
-
-  // less render
-  const transformer = classNameTransformer(nameFormat);
-  const fileContent = fs.readFileSync(file, "UTF-8");
-  const result = await less.render(fileContent, {
-    filename: path.resolve(file),
-    paths: includePaths,
-    syncImport: true,
-    plugins: [new LessAliasesPlugin(aliases)],
-    ...lessRenderOptions
-  });
-
-  // get classnames
-  const { exportTokens } = await sourceToClassNames(result.css);
-  const classNames = Object.keys(exportTokens);
-  const transformedClassNames = classNames.map(transformer);
-  return transformedClassNames;
-};
+export type Aliases = Record<string, string | AliasesFunc>;
 
 interface Transformer {
-  (className: string): string;
+  (className: ClassName): string;
 }
 
-const classNameTransformer = (nameFormat: NameFormat): Transformer => {
-  switch (nameFormat) {
-    case "kebab":
-    case "param":
-      return className => paramCase(className);
-    case "camel":
-      return className => camelcase(className);
-    case "dashes":
-      return className =>
-        /-/.test(className) ? camelcase(className) : className;
-    case "none":
-      return className => className;
-  }
+const transformersMap = {
+  camel: (className: ClassName) =>
+    camelCase(className, { transform: camelCaseTransformMerge }),
+  dashes: (className: ClassName) =>
+    /-/.test(className) ? camelCase(className) : className,
+  kebab: (className: ClassName) => transformersMap.param(className),
+  none: (className: ClassName) => className,
+  param: (className: ClassName) => paramCase(className),
+  snake: (className: ClassName) => snakeCase(className),
+} as const;
+
+type NameFormatWithTransformer = keyof typeof transformersMap;
+const NAME_FORMATS_WITH_TRANSFORMER = Object.keys(
+  transformersMap
+) as NameFormatWithTransformer[];
+
+export const NAME_FORMATS = [...NAME_FORMATS_WITH_TRANSFORMER, "all"] as const;
+export type NameFormat = (typeof NAME_FORMATS)[number];
+
+export interface LESSOptions {
+  includePaths?: string[];
+  aliases?: Aliases;
+  aliasPrefixes?: Aliases;
+  nameFormat?: NameFormat | NameFormat[];
+}
+export const nameFormatDefault: NameFormatWithTransformer = "camel";
+export const configFilePathDefault: string = "tlm.config.js";
+export const fileToClassNames = async (
+  file: string,
+  options: LESSOptions = {} as MainOptions
+) => {
+  const aliases = options.aliases || {};
+  const includePaths = options.includePaths || [];
+  const lessRenderOptions = (options as MainOptions).lessRenderOptions || {};
+
+  const nameFormat = (
+    typeof options.nameFormat === "string"
+      ? [options.nameFormat]
+      : options.nameFormat
+  ) as NameFormat[];
+
+  const nameFormats: NameFormatWithTransformer[] = nameFormat
+    ? nameFormat.includes("all")
+      ? NAME_FORMATS_WITH_TRANSFORMER
+      : (nameFormat as NameFormatWithTransformer[])
+    : [nameFormatDefault];
+
+  const fileContent = fs.readFileSync(file).toString();
+  const result = await render(fileContent, {
+    filename: slash(path.resolve(file)),
+    paths: includePaths,
+    syncImport: true,
+    plugins: [
+      new LessAliasesPlugin({
+        aliasPrefixes: options.aliasPrefixes,
+        aliases,
+      }),
+    ],
+    ...lessRenderOptions,
+  });
+
+  const classNames = await sourceToClassNames(result.css, file);
+  const transformers = nameFormats.map((item) => transformersMap[item]);
+  const transformedClassNames = new Set<ClassName>([]);
+  classNames.forEach((className: ClassName) => {
+    transformers.forEach((transformer: Transformer) => {
+      transformedClassNames.add(transformer(className));
+    });
+  });
+
+  return Array.from(transformedClassNames).sort((a, b) => a.localeCompare(b));
 };

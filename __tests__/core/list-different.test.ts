@@ -1,6 +1,7 @@
+import slash from "slash";
 import { listDifferent } from "../../lib/core";
 
-describe("writeFile", () => {
+describe("listDifferent", () => {
   let exit: jest.SpyInstance;
 
   beforeEach(() => {
@@ -12,10 +13,11 @@ describe("writeFile", () => {
     exit.mockRestore();
   });
 
-  test("logs invalid type definitions and exits with 1", async () => {
-    const pattern = `${__dirname}/../**/*.less`;
+  it("logs invalid type definitions and exits with 1", async () => {
+    const pattern = slash(`${__dirname}/../**/*.less`);
 
     await listDifferent(pattern, {
+      banner: "",
       watch: false,
       ignoreInitial: false,
       exportType: "named",
@@ -23,25 +25,59 @@ describe("writeFile", () => {
       exportTypeInterface: "Styles",
       listDifferent: true,
       aliases: {
-        "~fancy-import": `${__dirname}/../complex.less`,
-        "~another": `${__dirname}/../style.less`
+        "~fancy-import": "complex",
+        "~another": "style",
+      },
+      aliasPrefixes: {
+        "~": "nested-styles/",
       },
       ignore: [],
       quoteType: "single",
-      logLevel: "verbose"
+      updateStaleOnly: false,
+      logLevel: "verbose",
+      outputFolder: null,
     });
 
     expect(exit).toHaveBeenCalledWith(1);
-    expect(console.log).toBeCalledWith(
+    expect(console.log).toHaveBeenCalledWith(
       expect.stringContaining(`[INVALID TYPES] Check type definitions for`)
     );
-    expect(console.log).toBeCalledWith(expect.stringContaining(`invalid.less`));
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining(`invalid.less`)
+    );
   });
 
-  test("logs nothing and does not exit if all files are valid", async () => {
-    const pattern = `${__dirname}/../**/style.less`;
+  it("logs nothing and does not exit when formatted using Prettier", async () => {
+    const pattern = slash(`${__dirname}/list-different/formatted.less`);
 
     await listDifferent(pattern, {
+      banner: "",
+      watch: false,
+      ignoreInitial: false,
+      exportType: "default",
+      exportTypeName: "ClassNames",
+      exportTypeInterface: "Styles",
+      listDifferent: true,
+      ignore: [],
+      quoteType: "single",
+      updateStaleOnly: false,
+      logLevel: "verbose",
+      nameFormat: ["kebab"],
+      outputFolder: null,
+    });
+
+    expect(console.log).toHaveBeenCalledTimes(1);
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining(`Only 1 file found for`)
+    );
+    expect(exit).not.toHaveBeenCalled();
+  });
+
+  it("logs nothing and does not exit if all files are valid", async () => {
+    const pattern = slash(`${__dirname}/../dummy-styles/**/style.less`);
+
+    await listDifferent(pattern, {
+      banner: "",
       watch: false,
       ignoreInitial: false,
       exportType: "named",
@@ -50,10 +86,66 @@ describe("writeFile", () => {
       listDifferent: true,
       ignore: [],
       quoteType: "single",
-      logLevel: "verbose"
+      updateStaleOnly: false,
+      logLevel: "verbose",
+      outputFolder: null,
     });
 
     expect(exit).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
+  });
+
+  it("logs not generated type file and exits with 1", async () => {
+    const pattern = slash(`${__dirname}/list-different/no-generated.less`);
+
+    await listDifferent(pattern, {
+      banner: "",
+      watch: false,
+      ignoreInitial: false,
+      exportType: "named",
+      exportTypeName: "ClassNames",
+      exportTypeInterface: "Styles",
+      listDifferent: true,
+      ignore: [],
+      quoteType: "single",
+      updateStaleOnly: false,
+      logLevel: "verbose",
+      outputFolder: null,
+    });
+
+    expect(exit).toHaveBeenCalledWith(1);
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining(
+        `[INVALID TYPES] Type file needs to be generated for`
+      )
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining(`no-generated.less`)
+    );
+  });
+
+  it("ignores ignored files", async () => {
+    const pattern = slash(`${__dirname}/list-different/no-generated.less`);
+
+    await listDifferent(pattern, {
+      banner: "",
+      watch: false,
+      ignoreInitial: false,
+      exportType: "named",
+      exportTypeName: "ClassNames",
+      exportTypeInterface: "Styles",
+      listDifferent: true,
+      ignore: ["**/no-generated.less"],
+      quoteType: "single",
+      updateStaleOnly: false,
+      logLevel: "verbose",
+      outputFolder: null,
+    });
+
+    expect(exit).not.toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledTimes(1);
+    expect(console.log).toHaveBeenCalledWith(
+      expect.stringContaining(`No files found`)
+    );
   });
 });

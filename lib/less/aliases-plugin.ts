@@ -1,120 +1,150 @@
 // fork form https://github.com/dancon/less-plugin-aliases
+/**
+ * @fileoverview the plugin for less to support custom aliase
+ * @author houquan | 870301137@qq.com
+ * @version 1.0.0 | 2020-03-15 | houquan      // initial version
+ */
 
 import fs from "fs";
-import path from "path";
 import { Aliases } from "./file-to-class-names";
+
+interface Logger {
+  log: (msg: string) => void;
+  error: (error: Error) => void;
+}
 
 const checkExtList = [".less", ".css"];
 
-function normalizePath(filename: string) {
+function normalizePath(filename: string, currentDirectory: string) {
   if (/\.(?:less|css)$/i.test(filename)) {
-    return fs.existsSync(filename) ? filename : undefined;
+    return fs.existsSync(currentDirectory + filename) ? filename : undefined;
   }
 
   for (let i = 0, len = checkExtList.length; i < len; i++) {
     const ext = checkExtList[i];
-    if (fs.existsSync(`${filename}${ext}`)) {
+    if (fs.existsSync(`${currentDirectory}${filename}${ext}`)) {
       return `${filename}${ext}`;
     }
   }
 }
 
-export class LessAliasesPlugin {
-  constructor(private aliases: Aliases) {}
+interface Options {
+  aliasPrefixes?: Aliases;
+  aliases: Aliases;
+  logger?: Logger;
+}
+
+const defaultLogger = {
+  log: console.log,
+  error: console.error,
+};
+
+export default class LessAliasesPlugin {
+  constructor(private options: Options) {}
 
   install(less: LessStatic, pluginManager: Less.PluginManager) {
-    const { aliases = {} } = this;
+    const {
+      aliasPrefixes = {},
+      aliases = {},
+      logger = defaultLogger,
+    } = this.options;
 
-    function resolve(filename: string) {
-      // 从长到短排序可以有效避免 `a` 和 `ab` 别名冲突的问题
-      const aliasNames = Object.keys(aliases).sort(
-        (a, b) => b.length - a.length
-      );
-
-      // 没有设置别名 -> 输出原始文件
-      if (!aliasNames.length) {
-        return filename;
-      }
-
-      // 匹配别名 -> 输出匹配别名
-      // 有匹配项 & 未正确解析 -> 输出错误（用于处理同时设置了 '~' & '~~' 的情况）
-      let isHited = false;
+    function resolve(
+      filename: string,
+      currentDirectory: string
+    ): string | undefined {
       let resolvedPath: string | undefined;
 
-      for (let i = 0; i < aliasNames.length; i++) {
-        const aliasName = aliasNames[i];
-
-        if (filename.startsWith(aliasName)) {
-          isHited = true;
-          const targetAliasPath = aliases[aliasName];
-          const targetFileRestPath = filename.substr(aliasName.length);
-
-          // key: (filePath) => newFilePath
-          if (typeof targetAliasPath === "function") {
-            resolvedPath = normalizePath(targetAliasPath(filename));
-            // key: path
-          } else if (typeof targetAliasPath === "string") {
-            resolvedPath = normalizePath(
-              path.join(targetAliasPath, targetFileRestPath)
-            );
-            // key: [path, path]
-          } else if (Array.isArray(targetAliasPath)) {
-            for (let i = 0; i < targetAliasPath.length; i++) {
-              resolvedPath = normalizePath(
-                path.join(targetAliasPath[i], targetFileRestPath)
-              );
-              if (resolvedPath) {
-                return resolvedPath;
-              }
-            }
-          }
-
-          if (resolvedPath) {
-            return resolvedPath;
-          }
+      if (filename in aliases) {
+        const resolvedAlias = aliases[filename];
+        if (typeof resolvedAlias === "function") {
+          resolvedPath = normalizePath(
+            resolvedAlias(filename),
+            currentDirectory
+          );
+        } else {
+          resolvedPath = normalizePath(resolvedAlias, currentDirectory);
         }
+
+        if (!resolvedPath) {
+          throw new Error(`Invalid alias config for key: ${resolvedAlias}`);
+        }
+
+        return resolvedPath;
       }
 
-      if (isHited && !resolvedPath) {
-        throw new Error(`Invalid @import: ${filename}`);
+      const prefixMatch = Object.keys(aliasPrefixes).find((prefix) =>
+        filename.startsWith(prefix)
+      );
+
+      if (prefixMatch) {
+        let resolvedAliasPrefix = aliasPrefixes[prefixMatch];
+        if (typeof resolvedAliasPrefix === "function") {
+          resolvedPath = normalizePath(
+            resolvedAliasPrefix(filename),
+            currentDirectory
+          );
+        } else {
+          resolvedPath = normalizePath(
+            resolvedAliasPrefix + filename.slice(prefixMatch.length),
+            currentDirectory
+          );
+        }
+
+        if (!resolvedPath) {
+          throw new Error(`Invalid aliasPrefix config for key: ${prefixMatch}`);
+        }
+
+        return resolvedPath;
       }
+
+      return filename;
     }
 
-    function resolveFile(filename: string) {
+    function resolveFile(filename: string, currentDirectory: string) {
       let resolved;
       try {
-        resolved = resolve(filename);
+        resolved = resolve(filename, currentDirectory);
       } catch (error) {
-        console.error(error);
+        logger.error(error);
       }
       if (!resolved) {
-        throw new Error(
-          `[typed-less-modules:aliases-plugin]: '${filename}' not found.`
+        const error = new Error(
+          `[less-plugin-aliases]: '${filename}' not found.`
         );
+        logger.error(error);
+        throw error;
       }
       return resolved;
     }
 
-    class AliasePlugin extends less.FileManager {
+    class AliasPlugin extends less.FileManager {
       supports(filename: string, currentDirectory: string) {
         const aliasNames = Object.keys(aliases);
+        const aliasPrefixNames = Object.keys(aliasPrefixes);
 
-        for (let i = 0; i < aliasNames.length; i++) {
-          const aliasName = aliasNames[i];
-          if (
-            filename.indexOf(aliasName) !== -1 ||
-            currentDirectory.indexOf(aliasName) !== -1
-          ) {
-            return true;
-          }
-        }
-        return false;
+        let supports = false;
+
+        const containsSubstring = (substring: string) =>
+          filename.indexOf(substring) !== -1 ||
+          currentDirectory.indexOf(substring) !== -1;
+
+        supports = aliasNames.some((key) => {
+          return containsSubstring(key);
+        });
+        supports =
+          supports ||
+          aliasPrefixNames.some((prefix) => {
+            return containsSubstring(prefix);
+          });
+
+        return supports;
       }
 
       supportsSync(filename: string, currentDirectory: string) {
         return this.supports(filename, currentDirectory);
       }
-
+      // @ts-ignore
       loadFile(
         filename: string,
         currentDirectory: string,
@@ -123,7 +153,7 @@ export class LessAliasesPlugin {
         callback: Function
       ) {
         return super.loadFile(
-          resolveFile(filename),
+          resolveFile(filename, currentDirectory),
           currentDirectory,
           options,
           enviroment,
@@ -131,6 +161,7 @@ export class LessAliasesPlugin {
         );
       }
 
+      // @ts-ignore
       loadFileSync(
         filename: string,
         currentDirectory: string,
@@ -139,7 +170,7 @@ export class LessAliasesPlugin {
         callback: Function
       ) {
         return super.loadFileSync(
-          resolveFile(filename),
+          resolveFile(filename, currentDirectory),
           currentDirectory,
           options,
           enviroment,
@@ -148,6 +179,7 @@ export class LessAliasesPlugin {
       }
     }
 
-    pluginManager.addFileManager(new AliasePlugin());
+    // @ts-ignore
+    pluginManager.addFileManager(new AliasPlugin());
   }
-}
+} // fork form https://github.com/dancon/less-plugin-aliases

@@ -1,5 +1,4 @@
 import fs from "fs";
-
 import { generate } from "../../lib/core";
 
 describe("generate", () => {
@@ -9,10 +8,11 @@ describe("generate", () => {
     console.log = jest.fn(); // avoid console logs showing up
   });
 
-  test("generates types for all files matching the pattern", async () => {
-    const pattern = `${__dirname}/../**/*.less`;
+  it("generates types for all files matching the pattern", async () => {
+    const pattern = `${__dirname}/../dummy-styles/**/*.less`;
 
     await generate(pattern, {
+      banner: "",
       watch: false,
       ignoreInitial: false,
       exportType: "named",
@@ -21,9 +21,11 @@ describe("generate", () => {
       listDifferent: false,
       ignore: [],
       quoteType: "single",
-      logLevel: "verbose"
+      updateStaleOnly: false,
+      logLevel: "verbose",
+      outputFolder: null,
     });
 
-    expect(fs.writeFileSync).toBeCalledTimes(5);
+    expect(fs.writeFileSync).toHaveBeenCalledTimes(7);
   });
 });

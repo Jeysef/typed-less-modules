@@ -1,7 +1,8 @@
+import { ClassName } from "lib/less/file-to-class-names";
+import os from "os";
 import reserved from "reserved-words";
-
-import { ClassNames, ClassName } from "lib/less/file-to-class-names";
 import { alerts } from "../core";
+import { attemptPrettier } from "../prettier";
 
 export type ExportType = "named" | "default";
 export const EXPORT_TYPES: ExportType[] = ["named", "default"];
@@ -10,7 +11,8 @@ export type QuoteType = "single" | "double";
 export const QUOTE_TYPES: QuoteType[] = ["single", "double"];
 
 export interface TypeDefinitionOptions {
-  classNames: ClassNames;
+  banner: string;
+  classNames: ClassName[];
   exportType: ExportType;
   exportTypeName?: string;
   exportTypeInterface?: string;
@@ -21,9 +23,10 @@ export const exportTypeDefault: ExportType = "named";
 export const exportTypeNameDefault: string = "ClassNames";
 export const exportTypeInterfaceDefault: string = "Styles";
 export const quoteTypeDefault: QuoteType = "single";
+export const bannerTypeDefault: string = "";
 
 const classNameToNamedTypeDefinition = (className: ClassName) =>
-  `export const ${className}: string;`;
+  `export declare const ${className}: string;`;
 
 const classNameToType = (className: ClassName, quoteType: QuoteType) => {
   const quote = quoteType === "single" ? "'" : '"';
@@ -50,39 +53,51 @@ const isValidName = (className: ClassName) => {
   return true;
 };
 
-export const classNamesToTypeDefinitions = (
+export const classNamesToTypeDefinitions = async (
   options: TypeDefinitionOptions
-): string | null => {
+): Promise<string | null> => {
   if (options.classNames.length) {
-    let typeDefinitions;
+    const lines: string[] = [];
 
     const {
       exportTypeName: ClassNames = exportTypeNameDefault,
-      exportTypeInterface: Styles = exportTypeInterfaceDefault
+      exportTypeInterface: Styles = exportTypeInterfaceDefault,
     } = options;
 
     switch (options.exportType) {
       case "default":
-        typeDefinitions = `export type ${Styles} = {\n`;
-        typeDefinitions += options.classNames
-          .map(className =>
+        if (options.banner) lines.push(options.banner);
+
+        lines.push(`export type ${Styles} = {`);
+        lines.push(
+          ...options.classNames.map((className) =>
             classNameToType(className, options.quoteType || quoteTypeDefault)
           )
-          .join("\n");
-        typeDefinitions += "\n}\n\n";
-        typeDefinitions += `export type ${ClassNames} = keyof ${Styles};\n\n`;
-        typeDefinitions += `declare const styles: ${Styles};\n\n`;
-        typeDefinitions += "export default styles;\n";
-        return typeDefinitions;
-      case "named":
-        typeDefinitions = options.classNames
-          .filter(isValidName)
-          .map(classNameToNamedTypeDefinition);
+        );
+        lines.push(`};${os.EOL}`);
 
-        // Separate all type definitions be a newline with a trailing newline.
-        return typeDefinitions.join("\n") + "\n";
-      default:
-        return null;
+        lines.push(`export type ${ClassNames} = keyof ${Styles};${os.EOL}`);
+        lines.push(`declare const styles: ${Styles};${os.EOL}`);
+        lines.push(`export default styles;`);
+
+        break;
+      case "named":
+        if (options.banner) lines.push(options.banner);
+
+        lines.push(
+          ...options.classNames
+            .filter(isValidName)
+            .map(classNameToNamedTypeDefinition)
+        );
+
+        break;
+    }
+
+    if (lines.length) {
+      const typeDefinition = lines.join(`${os.EOL}`) + `${os.EOL}`;
+      return await attemptPrettier(typeDefinition);
+    } else {
+      return null;
     }
   } else {
     return null;

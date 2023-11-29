@@ -1,9 +1,30 @@
+import path from "path";
+import { DEFAULT_OPTIONS } from "../../lib/load";
 import { getTypeDefinitionPath } from "../../lib/typescript";
+import slash from "slash";
 
 describe("getTypeDefinitionPath", () => {
-  it("returns the type definition path", () => {
-    const path = getTypeDefinitionPath("/some/path/style.less");
+    const cssFilePath = slash(path.resolve(process.cwd(), "some/path/style.less"));
 
-    expect(path).toEqual("/some/path/style.less.d.ts");
-  });
+    it("returns the type definition path", () => {
+        const outputPath = getTypeDefinitionPath(cssFilePath, DEFAULT_OPTIONS);
+
+        expect(outputPath).toEqual(`${cssFilePath}.d.ts`);
+    });
+
+    describe("when outputFolder is passed", () => {
+        it("returns the type definition path", () => {
+            const outputPath = getTypeDefinitionPath(cssFilePath, {
+                ...DEFAULT_OPTIONS,
+                outputFolder: "__generated__",
+            });
+
+            const generatedFilePath = slash(path.resolve(
+                process.cwd(),
+                "__generated__/some/path/style.less.d.ts"
+            ));
+
+            expect(outputPath).toEqual(generatedFilePath);
+        });
+    });
 });

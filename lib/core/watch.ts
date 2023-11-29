@@ -1,8 +1,9 @@
 import chokidar from "chokidar";
-
 import { alerts } from "./alerts";
-import { writeFile } from "./write-file";
+import { listFilesAndPerformSanityChecks } from "./list-files-and-perform-sanity-checks";
+import { removeLESSTypeDefinitionFile } from "./remove-file";
 import { MainOptions } from "./types";
+import { writeFile } from "./write-file";
 
 /**
  * Watch a file glob and generate the corresponding types.
@@ -11,19 +12,27 @@ import { MainOptions } from "./types";
  * @param options the CLI options
  */
 export const watch = (pattern: string, options: MainOptions): void => {
-  alerts.success("Watching files...");
+    listFilesAndPerformSanityChecks(pattern, options);
 
-  chokidar
-    .watch(pattern, {
-      ignoreInitial: options.ignoreInitial,
-      ignored: options.ignore
-    })
-    .on("change", path => {
-      alerts.info(`[CHANGED] ${path}`);
-      writeFile(path, options);
-    })
-    .on("add", path => {
-      alerts.info(`[ADDED] ${path}`);
-      writeFile(path, options);
-    });
+    alerts.success("Watching files...");
+
+    chokidar
+        .watch(pattern, {
+            ignoreInitial: options.ignoreInitial,
+            ignored: options.ignore,
+        })
+        .on("change", (path) => {
+            alerts.info(`[CHANGED] ${path}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            writeFile(path, options);
+        })
+        .on("add", (path) => {
+            alerts.info(`[ADDED] ${path}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            writeFile(path, options);
+        })
+        .on("unlink", (path) => {
+            alerts.info(`[REMOVED] ${path}`);
+            removeLESSTypeDefinitionFile(path, options);
+        });
 };
