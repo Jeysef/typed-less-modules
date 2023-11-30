@@ -24,13 +24,13 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "typed-less-modules": "ts-node ./lib/cli.ts",
-    "build": "tsc",
+    "clean": "rmdir /Q /S dist",
+    "build": "npm run clean && tsc",
     "prepare": "npm run build && husky install",
     "check-types": "tsc --noEmit",
     "check-formatting": "prettier --check **/*.{js,json,css,md,less,tsx,ts}",
-    "codecov": "codecov",
+    "check-linting": "eslint .",
     "commit": "commit",
-    "ci": "yarn check-types && yarn check-formatting && yarn test",
     "semantic-release": "semantic-release"
   },
   "files": [
