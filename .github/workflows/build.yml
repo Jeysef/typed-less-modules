@@ -37,3 +37,8 @@ jobs:
         run: npm run check-formatting
       - name: "Commit formatting check"
         uses: wagoid/commitlint-github-action@v5
+      - name: Release
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm run semantic-release
