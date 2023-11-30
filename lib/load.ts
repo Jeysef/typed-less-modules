@@ -12,7 +12,10 @@ import {
   quoteTypeDefault,
 } from "./typescript";
 
-const VALID_CONFIG_FILES = ["tlm.config.ts", "tlm.config.js"];
+const VALID_CONFIG_FILES = [
+  "typed-less-modules.config.ts",
+  "typed-less-modules.config.js",
+];
 const joycon = new JoyCon();
 
 /**

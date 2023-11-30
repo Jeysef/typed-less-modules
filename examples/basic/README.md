@@ -8,7 +8,7 @@ This example contains:
 The command to generate the proper type files would look like this (_in the root of this repository_):
 
 ```bash
-npm run tlm "examples/basic/**/*.less" -- --includePaths examples/basic/core --aliases.~alias variables
+npm run typed-less-modules "examples/basic/**/*.less" -- --includePaths examples/basic/core --aliases.~alias variables
 ```
 
 - The glob pattern is wrapped in quotes to pass it as a string and avoid executing.

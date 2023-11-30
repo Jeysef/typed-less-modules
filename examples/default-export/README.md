@@ -8,5 +8,5 @@ This example contains:
 The command to generate the proper type files would look like this (_in the root of this repository_):
 
 ```bash
-npm run tlm "examples/default-export/**/*.less" --exportType default --nameFormat kebab
+npm run typed-less-modules "examples/default-export/**/*.less" -- --exportType default --nameFormat kebab
 ```

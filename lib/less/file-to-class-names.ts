@@ -49,7 +49,7 @@ export interface LESSOptions {
   nameFormat?: NameFormat | NameFormat[];
 }
 export const nameFormatDefault: NameFormatWithTransformer = "camel";
-export const configFilePathDefault: string = "tlm.config.js";
+export const configFilePathDefault: string = "typed-less-modules.config.js";
 export const fileToClassNames = async (
   file: string,
   options: LESSOptions = {} as MainOptions

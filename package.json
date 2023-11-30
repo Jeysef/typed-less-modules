@@ -23,7 +23,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "tlm": "ts-node ./lib/cli.ts",
+    "typed-less-modules": "ts-node ./lib/cli.ts",
     "build": "tsc",
     "prepare": "npm run build && husky install",
     "check-types": "tsc --noEmit",
@@ -36,9 +36,7 @@
   "files": [
     "dist/lib"
   ],
-  "bin": {
-    "tlm": "./dist/lib/cli.js"
-  },
+  "bin": "./dist/lib/cli.js",
   "devDependencies": {
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
