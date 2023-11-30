@@ -148,47 +148,35 @@ export default class LessAliasesPlugin {
       supportsSync(filename: string, currentDirectory: string) {
         return this.supports(filename, currentDirectory);
       }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       loadFile(
         filename: string,
         currentDirectory: string,
         options: Record<string, unknown>,
-        enviroment: unknown,
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        callback: Function
+        enviroment: Less.Environment
       ) {
         return super.loadFile(
           resolveFile(filename, currentDirectory),
           currentDirectory,
           options,
-          enviroment,
-          callback
+          enviroment
         );
       }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       loadFileSync(
         filename: string,
         currentDirectory: string,
         options: Record<string, unknown>,
-        enviroment: unknown,
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        callback: Function
+        enviroment: Less.Environment
       ) {
         return super.loadFileSync(
           resolveFile(filename, currentDirectory),
           currentDirectory,
           options,
-          enviroment,
-          callback
+          enviroment
         );
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     pluginManager.addFileManager(new AliasPlugin());
   }
 } // fork form https://github.com/dancon/less-plugin-aliases
