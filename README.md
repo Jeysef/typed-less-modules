@@ -1,14 +1,6 @@
 # 🎁 typed-less-modules
 
-[![Travis Build Status](https://img.shields.io/travis/com/qiniu/typed-less-modules/master?style=for-the-badge)](https://travis-ci.com/qiniu/typed-less-modules)
-[![Codecov](https://img.shields.io/codecov/c/github/qiniu/typed-less-modules?style=for-the-badge)](https://codecov.io/gh/qiniu/typed-less-modules)
-[![npm](https://img.shields.io/npm/v/@qiniu/typed-less-modules?color=%23c7343a&label=npm&style=for-the-badge)](https://www.npmjs.com/package/@qiniu/typed-less-modules)
-[![GitHub stars](https://img.shields.io/github/stars/qiniu/typed-less-modules.svg?style=for-the-badge)](https://github.com/qiniu/typed-less-modules/stargazers)
-[![license](https://img.shields.io/github/license/qiniu/typed-less-modules?style=for-the-badge)](https://github.com/qiniu/typed-less-modules/blob/master/LICENSE)
-
-Generate TypeScript definitions (`.d.ts`) files for CSS Modules that are written in LESS (`.less`).
-
-**typed-less-modules** 用于将 `.less` 转换为对应的 `.d.ts` TypeScript 类型声明文件。
+Generate TypeScript definitions (`.d.ts`) files for CSS Modules that are written in LESS (`.less`). Check out [this post to learn more](https://skovy.dev/generating-typescript-definitions-for-css-modules-using-sass/) about the rationale and inspiration behind this package.
 
 ![Example](/docs/typed-less-modules-example.gif)
 
@@ -29,43 +21,44 @@ For example, given the following LESS:
 The following type definitions will be generated:
 
 ```typescript
-export const text: string;
-export const textHighlighted: string;
+export declare const text: string;
+export declare const textHighlighted: string;
 ```
 
 ## Basic Usage
 
-Run with npm package runner:
+Install and run as a `devDependency`:
 
 ```bash
-npx tlm src
+yarn add -D typed-less-modules
+yarn typed-less-modules src
 ```
 
 Or, install globally:
 
 ```bash
 yarn global add typed-less-modules
-tlm src
+typed-less-modules src
 ```
 
-Or, install and run as a `devDependency`:
+Or, with npm:
 
 ```bash
-yarn add -D typed-less-modules
-yarn tlm src
+npm install -D typed-less-modules
+npx typed-less-modules src
 ```
 
-## Advanced Usage
+## CLI Options
 
-For all possible commands, run `tlm --help`.
+For all possible commands, run `typed-less-modules --help`.
 
-The only required argument is the directory where all LESS files are located (`config.pattern`). Running `tlm src` will search for all files matching `src/**/*.less`. This can be overridden by providing a [glob](https://github.com/isaacs/node-glob#glob-primer) pattern instead of a directory. For example, `tlm src/*.less`
+The only required argument is the directory where all LESS files are located. Running `typed-less-modules src` will search for all files matching `src/**/*.less`. This can be overridden by providing a [glob](https://github.com/isaacs/node-glob#glob-primer) pattern instead of a directory. For example, `typed-less-modules src/*.less`
 
 ### `--watch` (`-w`)
 
 - **Type**: `boolean`
 - **Default**: `false`
-- **Example**: `tlm src --watch`
+- **Example**: `typed-less-modules src --watch`
 
 Watch for files that get added or are changed and generate the corresponding type definitions.
 
@@ -73,7 +66,7 @@ Watch for files that get added or are changed and generate the corresponding typ
 
 - **Type**: `boolean`
 - **Default**: `false`
-- **Example**: `tlm src --watch --ignoreInitial`
+- **Example**: `typed-less-modules src --watch --ignoreInitial`
 
 Skips the initial build when passing the watch flag. Use this when running concurrently with another watch, but the initial build should happen first. You would run without watch first, then start off the concurrent runs after.
 
@@ -81,7 +74,7 @@ Skips the initial build when passing the watch flag. Use this when running concu
 
 - **Type**: `string[]`
 - **Default**: `[]`
-- **Example**: `tlm src --watch --ignore "**/secret.less"`
+- **Example**: `typed-less-modules src --watch --ignore "**/secret.less"`
 
 A pattern or an array of glob patterns to exclude files that match and avoid generating type definitions.
 
@@ -89,7 +82,7 @@ A pattern or an array of glob patterns to exclude files that match and avoid gen
 
 - **Type**: `string[]`
 - **Default**: `[]`
-- **Example**: `tlm src --includePaths src/core`
+- **Example**: `typed-less-modules src --includePaths src/core`
 
 An array of paths to look in to attempt to resolve your `@import` declarations. This example will search the `src/core` directory when resolving imports.
 
@@ -97,21 +90,34 @@ An array of paths to look in to attempt to resolve your `@import` declarations. 
 
 - **Type**: `object`
 - **Default**: `{}`
-- **Example**: `tlm src --aliases.~some-alias src/core/variables`
+- **Example**: `typed-less-modules src --aliases.~some-alias src/core/variables`
 
 An object of aliases to map to their corresponding paths. This example will replace any `@import '~alias'` with `@import 'src/core/variables'`.
 
+### `--aliasPrefixes` (`-p`)
+
+- **Type**: `object`
+- **Default**: `{}`
+- **Example**: `typed-less-modules src --aliasPrefixes.~ node_modules/`
+
+An object of prefix strings to replace with their corresponding paths. This example will replace any `@import '~bootstrap/lib/bootstrap'` with `@import 'node_modules/bootstrap/lib/bootstrap'`.
+This matches the common use-case for importing less files from node_modules when `sass-loader` will be used with `webpack` to compile the project.
+
 ### `--nameFormat` (`-n`)
 
-- **Type**: `"camel" | "kebab" | "param" | "dashes" | "none"`
+- **Type**: `"all" | "camel" | "kebab" | "param" | "snake" | "dashes" | "none"`
 - **Default**: `"camel"`
-- **Example**: `tlm src --nameFormat camel`
+- **Examples**:
+  - `typed-less-modules src --nameFormat camel`
+  - `typed-less-modules src --nameFormat kebab --nameFormat dashes --exportType default`. In order to use multiple formatters, you must use `--exportType default`.
 
 The class naming format to use when converting the classes to type definitions.
 
+- **all**: makes use of all formatters (except `all` and `none`) and converts all class names to their respective formats, with no duplication. In order to use this option, you must use `--exportType default`.
 - **camel**: convert all class names to camel-case, e.g. `App-Logo` => `appLogo`.
 - **kebab**/**param**: convert all class names to kebab/param case, e.g. `App-Logo` => `app-logo` (all lower case with '-' separators).
 - **dashes**: only convert class names containing dashes to camel-case, leave others alone, e.g. `App` => `App`, `App-Logo` => `appLogo`. Matches the webpack [css-loader camelCase 'dashesOnly'](https://github.com/webpack-contrib/css-loader#camelcase) option.
+- **snake**: convert all class names to lower case with underscores between words.
 - **none**: do not modify the given class names (you should use `--exportType default` when using `--nameFormat none` as any classes with a `-` in them are invalid as normal variable names).
   Note: If you are using create-react-app v2.x and have NOT ejected, `--nameFormat none --exportType default` matches the class names that are generated in CRA's webpack's config.
 
@@ -119,7 +125,7 @@ The class naming format to use when converting the classes to type definitions.
 
 - **Type**: `boolean`
 - **Default**: `false`
-- **Example**: `tlm src --listDifferent`
+- **Example**: `typed-less-modules src --listDifferent`
 
 List any type definition files that are different than those that would be generated. If any are different, exit with a status code `1`.
 
@@ -127,7 +133,7 @@ List any type definition files that are different than those that would be gener
 
 - **Type**: `"named" | "default"`
 - **Default**: `"named"`
-- **Example**: `tlm src --exportType default`
+- **Example**: `typed-less-modules src --exportType default`
 
 The export type to use when generating type definitions.
 
@@ -148,8 +154,8 @@ Given the following LESS:
 The following type definitions will be generated:
 
 ```typescript
-export const text: string;
-export const textHighlighted: string;
+export declare const text: string;
+export declare const textHighlighted: string;
 ```
 
 #### `default`
@@ -187,7 +193,7 @@ This export type is useful when using kebab (param) cased class names since vari
 
 - **Type**: `string`
 - **Default**: `"ClassNames"`
-- **Example**: `tlm src --exportType default --exportTypeName ClassesType`
+- **Example**: `typed-less-modules src --exportType default --exportTypeName ClassesType`
 
 Customize the type name exported in the generated file when `--exportType` is set to `"default"`.
 Only default exports are affected by this command. This example will change the export type line to:
@@ -200,7 +206,7 @@ export type ClassesType = keyof Styles;
 
 - **Type**: `string`
 - **Default**: `"Styles"`
-- **Example**: `tlm src --exportType default --exportTypeInterface IStyles`
+- **Example**: `typed-less-modules src --exportType default --exportTypeInterface IStyles`
 
 Customize the interface name exported in the generated file when `--exportType` is set to `"default"`.
 Only default exports are affected by this command. This example will change the export interface line to:
@@ -215,54 +221,27 @@ export type IStyles = {
 
 - **Type**: `"single" | "double"`
 - **Default**: `"single"`
-- **Example**: `tlm src --exportType default --quoteType double`
+- **Example**: `typed-less-modules src --exportType default --quoteType double`
 
-Specify a quote type to match your TypeScript configuration. Only default exports are affected by this command. This example will wrap class names with double quotes (").
+Specify a quote type to match your TypeScript configuration. Only default exports are affected by this command. This example will wrap class names with double quotes ("). If [Prettier](https://prettier.io) is installed and configured in the project, it will be used and is likely to override the effect of this setting.
 
-### `--logLevel` (`-l`)
+### `--updateStaleOnly` (`-u`)
+
+- **Type**: `boolean`
+- **Default**: `false`
+- **Example**: `typed-less-modules src --updateStaleOnly`
+
+Overwrite generated files only if the source file has more recent changes. This can be useful if you want to avoid extraneous file updates, which can cause watcher processes to trigger unnecessarily (e.g. `tsc --watch`). This is done by first checking if the generated file was modified more recently than the source file, and secondly by comparing the existing file contents to the generated file contents.
+
+Caveat: If a generated type definition file is updated manually, it won't be re-generated until the corresponding less file is also updated.
+
+### `--logLevel` (`-L`)
 
 - **Type**: `"verbose" | "error" | "info" | "silent"`
 - **Default**: `"verbose"`
-- **Example**: `tlm src --logLevel error`
+- **Example**: `typed-less-modules src --logLevel error`
 
 Sets verbosity level of console output.
-
-### `--config` (`-c`)
-
-- **Type**: `string`
-- **Default**: `tlm.config.js`
-- **Example**: `tlm --config ./path/to/tlm.config.js`
-
-指定配置文件的路径，配置文件可代替所有的命令行参数，默认读取 `process.cwd() + tlm.config.js` 文件。
-
-```js
-// tlm.config.js
-const path = require("path");
-
-module.exports = {
-  pattern: "./src/**/*.m.less",
-  watch: true,
-  // ...
-  // 上述所有配置均可用
-  aliases: {
-    // 映射至多路径
-    "~": [
-      path.resolve(__dirname, "node_modules"),
-      path.resolve(__dirname, "src"),
-    ],
-    // 映射至单路径
-    "@": path.resolve(__dirname, "some-dir"),
-    // 自定义映射规则
-    "abc-module"(filePath) {
-      return filePath.replace("abc-module", "xxx-path");
-    },
-  },
-  // less.render options 参数
-  lessRenderOptions: {
-    javascriptEnabled: true,
-  },
-};
-```
 
 #### `verbose`
 
@@ -280,12 +259,128 @@ Print only some messages
 
 Print nothing
 
+### `--banner`
+
+- **Type**: `string`
+- **Default**: `undefined`
+- **Example**: `typed-less-modules src --banner '// This is an example banner\n'`
+
+Will prepend a string to the top of your output files
+
+```typescript
+// This is an example banner
+export type Styles = {
+  // ...
+};
+```
+
+### `--outputFolder` (`-o`)
+
+- **Type**: `string`
+- **Default**: _none_
+- **Example**: `typed-less-modules src --outputFolder __generated__`
+
+Set a relative folder to output the generated type definitions. Instead of writing the type definitions directly next to each LESS module (sibling file), it will write to the output folder with the same path.
+
+It will use the relative path to the LESS module from where this tool is executed. This same path (including any directories) will be constructed in the output folder. This is important for this to work properly with TypeScript.
+
+**Important**: for this to work as expected the `tsconfig.json` needs to have [`rootDirs`](https://www.typescriptlang.org/tsconfig#rootDirs) added with the same output folder. This will allow TypeScript to pick up these type definitions and map them to the actual LESS modules.
+
+```json
+{
+  "compilerOptions": {
+    "rootDirs": [".", "__generated__"]
+  }
+}
+```
+
+### `--additionalData` (`-d`)
+
+- **Type**: `string`
+- **Default**: _none_
+- **Example**: `typed-less-modules src --additionalData '$global-var: green;'`
+
+Prepend the provided LESS code before each file. This is useful for injecting globals into every file, such as adding an import to load global variables for each file.
+
+## Config options
+
+All options above are also supported as a configuration file in the root of the project. The following configuration file names are supported:
+
+- `typed-less-modules.config.ts`
+- `typed-less-modules.config.js`
+
+The file can provide either a named `config` export or a default export.
+
+```js
+// Example of a named export with some of the options sets.
+export const config = {
+  banner: "// customer banner",
+  exportType: "default",
+  exportTypeName: "TheClasses",
+  logLevel: "error",
+};
+
+// Example of a default export with some of the options sets.
+export default {
+  banner: "// customer banner",
+  exportType: "default",
+  exportTypeName: "TheClasses",
+  logLevel: "error",
+};
+```
+
+> Note: the configuration options are the same as the CLI options without the leading dashes (`--`). Only the full option name is supported (not aliases) in the configuration file.
+
+CLI options will take precedence over configuration file options.
+
+In addition to all CLI options, the following are options only available with the configuration file:
+
 ## Examples
 
-For examples, see the `examples` directory:
+For examples of how this tool can be used and configured, see the `examples` directory:
 
-- [Basic Example](/examples/basic)
-- [Default Export Example](/examples/default-export)
+- [Basic example](/examples/basic)
+- [Default export example](/examples/default-export)
+- [Config file (with custom importer) example](/examples/config-file)
+
+## Contributors ✨
+
+to the original project [typed-scss-modules](https://github.com/skovy/typed-scss-modules)
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/dawnmist"><img src="https://avatars3.githubusercontent.com/u/5810277?v=4?s=100" width="100px;" alt="Janeene Beeforth"/><br /><sub><b>Janeene Beeforth</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/issues?q=author%3Adawnmist" title="Bug reports">🐛</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=dawnmist" title="Code">💻</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=dawnmist" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ericbf"><img src="https://avatars0.githubusercontent.com/u/2483476?v=4?s=100" width="100px;" alt="Eric Ferreira"/><br /><sub><b>Eric Ferreira</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/commits?author=ericbf" title="Code">💻</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=ericbf" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lkarmelo"><img src="https://avatars2.githubusercontent.com/u/20393808?v=4?s=100" width="100px;" alt="Luis Lopes"/><br /><sub><b>Luis Lopes</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/commits?author=lkarmelo" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://nostalg.io"><img src="https://avatars0.githubusercontent.com/u/5139752?v=4?s=100" width="100px;" alt="Josh Wedekind"/><br /><sub><b>Josh Wedekind</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/commits?author=halfnibble" title="Code">💻</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=halfnibble" title="Documentation">📖</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=halfnibble" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/peanutbother"><img src="https://avatars3.githubusercontent.com/u/6437182?v=4?s=100" width="100px;" alt="Jared Gesser"/><br /><sub><b>Jared Gesser</b></sub></a><br /><a href="#ideas-peanutbother" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/raphael-leger"><img src="https://avatars1.githubusercontent.com/u/12732777?v=4?s=100" width="100px;" alt="Raphaël L"/><br /><sub><b>Raphaël L</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/commits?author=raphael-leger" title="Code">💻</a> <a href="#ideas-raphael-leger" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://NickTheSick.com"><img src="https://avatars1.githubusercontent.com/u/1852538?v=4?s=100" width="100px;" alt="Nick Perez"/><br /><sub><b>Nick Perez</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/issues?q=author%3Anperez0111" title="Bug reports">🐛</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=nperez0111" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://alander.org"><img src="https://avatars3.githubusercontent.com/u/1771462?v=4?s=100" width="100px;" alt="Even Alander"/><br /><sub><b>Even Alander</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/commits?author=deificx" title="Code">💻</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=deificx" title="Tests">⚠️</a> <a href="#ideas-deificx" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://inkblotty.github.io"><img src="https://avatars3.githubusercontent.com/u/14206003?v=4?s=100" width="100px;" alt="Katie Foster"/><br /><sub><b>Katie Foster</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/commits?author=inkblotty" title="Code">💻</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=inkblotty" title="Tests">⚠️</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=inkblotty" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ccortezaguilera"><img src="https://avatars3.githubusercontent.com/u/10718803?v=4?s=100" width="100px;" alt="Carlos Aguilera"/><br /><sub><b>Carlos Aguilera</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/commits?author=ccortezaguilera" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/craigrmccown"><img src="https://avatars1.githubusercontent.com/u/2373979?v=4?s=100" width="100px;" alt="Craig McCown"/><br /><sub><b>Craig McCown</b></sub></a><br /><a href="#ideas-craigrmccown" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=craigrmccown" title="Code">💻</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=craigrmccown" title="Tests">⚠️</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=craigrmccown" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/capsuleman"><img src="https://avatars.githubusercontent.com/u/34281913?v=4?s=100" width="100px;" alt="Guillaume Vagner"/><br /><sub><b>Guillaume Vagner</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/commits?author=capsuleman" title="Code">💻</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=capsuleman" title="Tests">⚠️</a> <a href="https://github.com/skovy/typed-scss-modules/issues?q=author%3Acapsuleman" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://dev.to/srmagura"><img src="https://avatars.githubusercontent.com/u/801549?v=4?s=100" width="100px;" alt="Sam Magura"/><br /><sub><b>Sam Magura</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/commits?author=srmagura" title="Code">💻</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=srmagura" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/MichaelGregory"><img src="https://avatars.githubusercontent.com/u/1435960?v=4?s=100" width="100px;" alt="Mike Gregory"/><br /><sub><b>Mike Gregory</b></sub></a><br /><a href="https://github.com/skovy/typed-scss-modules/issues?q=author%3AMichaelGregory" title="Bug reports">🐛</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=MichaelGregory" title="Code">💻</a> <a href="https://github.com/skovy/typed-scss-modules/commits?author=MichaelGregory" title="Tests">⚠️</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
 ## Alternatives
 
