@@ -11,7 +11,7 @@ export declare const number1: string;
 export declare const someStyles: string;
 export declare const whereSelector: string;
 ",
-    "path": "..\\__generated__\\__tests__\\dummy-styles\\alias-prefixes.less.d.ts",
+    "path": "../__generated__/__tests__/dummy-styles/alias-prefixes.less.d.ts",
   },
   {
     "contents": "export declare const myCustomClass: string;
@@ -22,7 +22,7 @@ export declare const someClass: string;
 export declare const someStyles: string;
 export declare const whereSelector: string;
 ",
-    "path": "..\\__generated__\\__tests__\\dummy-styles\\aliases.less.d.ts",
+    "path": "../__generated__/__tests__/dummy-styles/aliases.less.d.ts",
   },
   {
     "contents": "export declare const nestedAnother: string;
@@ -31,39 +31,39 @@ export declare const number1: string;
 export declare const someStyles: string;
 export declare const whereSelector: string;
 ",
-    "path": "..\\__generated__\\__tests__\\dummy-styles\\complex.less.d.ts",
+    "path": "../__generated__/__tests__/dummy-styles/complex.less.d.ts",
   },
   {
     "contents": "export declare const composedClass: string;
 ",
-    "path": "..\\__generated__\\__tests__\\dummy-styles\\composes.less.d.ts",
+    "path": "../__generated__/__tests__/dummy-styles/composes.less.d.ts",
   },
   {
     "contents": "export declare const app: string;
 export declare const appHeader: string;
 export declare const logo: string;
 ",
-    "path": "..\\__generated__\\__tests__\\dummy-styles\\dashes.less.d.ts",
+    "path": "../__generated__/__tests__/dummy-styles/dashes.less.d.ts",
   },
   {
     "contents": "export declare const globalStyle: string;
 ",
-    "path": "..\\__generated__\\__tests__\\dummy-styles\\global-variables.less.d.ts",
+    "path": "../__generated__/__tests__/dummy-styles/global-variables.less.d.ts",
   },
   {
     "contents": "export declare const randomClass: string;
 ",
-    "path": "..\\__generated__\\__tests__\\dummy-styles\\invalid.less.d.ts",
+    "path": "../__generated__/__tests__/dummy-styles/invalid.less.d.ts",
   },
   {
     "contents": "export declare const nestedStyles: string;
 ",
-    "path": "..\\__generated__\\__tests__\\dummy-styles\\nested-styles\\style.less.d.ts",
+    "path": "../__generated__/__tests__/dummy-styles/nested-styles/style.less.d.ts",
   },
   {
     "contents": "export declare const someClass: string;
 ",
-    "path": "..\\__generated__\\__tests__\\dummy-styles\\style.less.d.ts",
+    "path": "../__generated__/__tests__/dummy-styles/style.less.d.ts",
   },
 ]
 `;
@@ -87,7 +87,7 @@ declare const styles: Styles;
 
 export default styles;
 ",
-    "path": "dummy-styles\\alias-prefixes.less.d.ts",
+    "path": "dummy-styles/alias-prefixes.less.d.ts",
   },
   {
     "contents": "export type Styles = {
@@ -106,7 +106,7 @@ declare const styles: Styles;
 
 export default styles;
 ",
-    "path": "dummy-styles\\aliases.less.d.ts",
+    "path": "dummy-styles/aliases.less.d.ts",
   },
   {
     "contents": "export type Styles = {
@@ -123,7 +123,7 @@ declare const styles: Styles;
 
 export default styles;
 ",
-    "path": "dummy-styles\\complex.less.d.ts",
+    "path": "dummy-styles/complex.less.d.ts",
   },
   {
     "contents": "export type Styles = {
@@ -136,7 +136,7 @@ declare const styles: Styles;
 
 export default styles;
 ",
-    "path": "dummy-styles\\composes.less.d.ts",
+    "path": "dummy-styles/composes.less.d.ts",
   },
   {
     "contents": "export type Styles = {
@@ -151,7 +151,7 @@ declare const styles: Styles;
 
 export default styles;
 ",
-    "path": "dummy-styles\\dashes.less.d.ts",
+    "path": "dummy-styles/dashes.less.d.ts",
   },
   {
     "contents": "export type Styles = {
@@ -164,7 +164,7 @@ declare const styles: Styles;
 
 export default styles;
 ",
-    "path": "dummy-styles\\global-variables.less.d.ts",
+    "path": "dummy-styles/global-variables.less.d.ts",
   },
   {
     "contents": "export type Styles = {
@@ -177,7 +177,7 @@ declare const styles: Styles;
 
 export default styles;
 ",
-    "path": "dummy-styles\\invalid.less.d.ts",
+    "path": "dummy-styles/invalid.less.d.ts",
   },
   {
     "contents": "export type Styles = {
@@ -190,7 +190,7 @@ declare const styles: Styles;
 
 export default styles;
 ",
-    "path": "dummy-styles\\nested-styles\\style.less.d.ts",
+    "path": "dummy-styles/nested-styles/style.less.d.ts",
   },
   {
     "contents": "export type Styles = {
@@ -203,7 +203,7 @@ declare const styles: Styles;
 
 export default styles;
 ",
-    "path": "dummy-styles\\style.less.d.ts",
+    "path": "dummy-styles/style.less.d.ts",
   },
 ]
 `;

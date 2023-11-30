@@ -111,7 +111,7 @@ describe("main", () => {
   });
 
   it("reads options from the configuration file", async () => {
-    const pattern = `${__dirname}/dummy-styles`;
+    const pattern = slash(`${__dirname}/dummy-styles`);
 
     jest.spyOn(process, "cwd").mockReturnValue(path.resolve(pattern));
 
@@ -133,7 +133,7 @@ describe("main", () => {
     // Transform the calls into a more readable format for the snapshot.
     const contents = writeFileSyncSpy.mock.calls
       .map(([fullFilePath, contents]: [string, string]) => ({
-        path: path.relative(__dirname, fullFilePath),
+        path: slash(path.relative(__dirname, fullFilePath)),
         contents,
       }))
       // Sort to avoid flakey snapshot tests if call order changes.
@@ -143,7 +143,7 @@ describe("main", () => {
   });
 
   it("outputs the correct files when outputFolder is passed", async () => {
-    const pattern = path.resolve(__dirname, "dummy-styles");
+    const pattern = slash(path.resolve(__dirname, "dummy-styles"));
 
     await main(pattern, {
       additionalData: "@global-red: red;",
@@ -164,7 +164,7 @@ describe("main", () => {
     // Transform the calls into a more readable format for the snapshot.
     const contents = writeFileSyncSpy.mock.calls
       .map(([fullFilePath, contents]: [string, string]) => ({
-        path: path.relative(__dirname, fullFilePath),
+        path: slash(path.relative(__dirname, fullFilePath)),
         contents,
       }))
       // Sort to avoid flakey snapshot tests if call order changes.
