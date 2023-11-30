@@ -212,7 +212,7 @@ describe("writeFile", () => {
             encoding?: null | undefined;
             flag?: string | undefined;
           } | null
-        ) => (p === expectedPath ? `` : originalReadFileSync(p, opts))
+        ) => (p === expectedPath ? "" : originalReadFileSync(p, opts))
       );
 
       await writeFile(testFile, {

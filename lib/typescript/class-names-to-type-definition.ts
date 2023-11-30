@@ -78,7 +78,7 @@ export const classNamesToTypeDefinitions = async (
 
         lines.push(`export type ${ClassNames} = keyof ${Styles};${os.EOL}`);
         lines.push(`declare const styles: ${Styles};${os.EOL}`);
-        lines.push(`export default styles;`);
+        lines.push("export default styles;");
 
         break;
       case "named":

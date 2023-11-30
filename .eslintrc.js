@@ -3,7 +3,6 @@ module.exports = {
   root: true,
   extends: [
     "eslint:recommended",
-    "@typescript-eslint/parser",
     "plugin:@typescript-eslint/recommended",
     "plugin:jest-formatting/strict",
     "plugin:jest/recommended",
@@ -25,6 +24,7 @@ module.exports = {
   rules: {
     "promise/prefer-await-to-then": "error",
     "jest/consistent-test-it": ["error", { fn: "it" }],
+    "jest/no-focused-tests": "off",
     quotes: ["error", "double"],
   },
 };

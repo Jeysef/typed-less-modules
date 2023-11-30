@@ -21,7 +21,7 @@ export const generate = async (
 
   alerts.success(
     `Found ${files.length} file${
-      files.length === 1 ? `` : `s`
+      files.length === 1 ? "" : "s"
     }. Generating type definitions...`
   );
 

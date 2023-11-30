@@ -40,10 +40,10 @@ describe("listDifferent", () => {
 
     expect(exit).toHaveBeenCalledWith(1);
     expect(console.log).toHaveBeenCalledWith(
-      expect.stringContaining(`[INVALID TYPES] Check type definitions for`)
+      expect.stringContaining("[INVALID TYPES] Check type definitions for")
     );
     expect(console.log).toHaveBeenCalledWith(
-      expect.stringContaining(`invalid.less`)
+      expect.stringContaining("invalid.less")
     );
   });
 
@@ -68,7 +68,7 @@ describe("listDifferent", () => {
 
     expect(console.log).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
-      expect.stringContaining(`Only 1 file found for`)
+      expect.stringContaining("Only 1 file found for")
     );
     expect(exit).not.toHaveBeenCalled();
   });
@@ -116,11 +116,11 @@ describe("listDifferent", () => {
     expect(exit).toHaveBeenCalledWith(1);
     expect(console.log).toHaveBeenCalledWith(
       expect.stringContaining(
-        `[INVALID TYPES] Type file needs to be generated for`
+        "[INVALID TYPES] Type file needs to be generated for"
       )
     );
     expect(console.log).toHaveBeenCalledWith(
-      expect.stringContaining(`no-generated.less`)
+      expect.stringContaining("no-generated.less")
     );
   });
 
@@ -145,7 +145,7 @@ describe("listDifferent", () => {
     expect(exit).not.toHaveBeenCalled();
     expect(console.log).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
-      expect.stringContaining(`No files found`)
+      expect.stringContaining("No files found")
     );
   });
 });

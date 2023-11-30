@@ -135,4 +135,4 @@ const { _: patterns, ...rest } = yargs
   })
   .parseSync();
 
-main(patterns[0] as string, { ...rest } as Partial<MainOptions>);
+void main(patterns[0] as string, { ...rest } as Partial<MainOptions>);

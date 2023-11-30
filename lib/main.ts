@@ -36,7 +36,7 @@ export const main = async (
   }
 
   if (options.listDifferent) {
-    listDifferent(pattern, options);
+    void listDifferent(pattern, options);
     return;
   }
 

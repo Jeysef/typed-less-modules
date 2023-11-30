@@ -11,6 +11,7 @@ declare namespace Less {
   }
 
   interface FileManager {
+    // eslint-disable-next-line @typescript-eslint/no-misused-new
     new (): FileManager;
     getPath?(filename: string): string;
     tryAppendLessExtension?(filename: string): string;
@@ -35,6 +36,7 @@ declare namespace Less {
       currentDirectory: string,
       options: Record<string, unknown>,
       environment: unknown,
+      // eslint-disable-next-line @typescript-eslint/ban-types
       callback: Function
     ): Promise<FileContent>;
     loadFileSync(
@@ -42,6 +44,7 @@ declare namespace Less {
       currentDirectory: string,
       options: Record<string, unknown>,
       environment: unknown,
+      // eslint-disable-next-line @typescript-eslint/ban-types
       callback: Function
     ): FileContentWithError;
   }

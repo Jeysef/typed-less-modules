@@ -10,7 +10,7 @@ describe.only("cli", () => {
   describe("examples", () => {
     it("should run the basic example without errors", () => {
       const result = execSync(
-        `npm run typed-less-modules "examples/basic/**/*.less" -- --includePaths examples/basic/core --aliases.~alias examples/basic/core/variables`
+        'npm run typed-less-modules "examples/basic/**/*.less" -- --includePaths examples/basic/core --aliases.~alias examples/basic/core/variables'
       ).toString();
 
       expect(result).toContain("Found 3 files. Generating type definitions...");
@@ -18,7 +18,7 @@ describe.only("cli", () => {
 
     it("should run the default-export example without errors", () => {
       const result = execSync(
-        `npm run typed-less-modules "examples/default-export/**/*.less" -- --exportType default --nameFormat kebab`
+        'npm run typed-less-modules "examples/default-export/**/*.less" -- --exportType default --nameFormat kebab'
       ).toString();
 
       expect(result).toContain("Found 1 file. Generating type definitions...");

@@ -58,16 +58,20 @@ export default class LessAliasesPlugin {
       if (filename in aliases) {
         const resolvedAlias = aliases[filename];
         if (typeof resolvedAlias === "function") {
-          resolvedPath = normalizePath(
-            resolvedAlias(filename),
-            currentDirectory
-          );
+          const resolvedAliasString = resolvedAlias(filename);
+          resolvedPath = normalizePath(resolvedAliasString, currentDirectory);
+
+          if (!resolvedPath) {
+            throw new Error(
+              `Invalid alias config for key: ${resolvedAliasString}`
+            );
+          }
         } else {
           resolvedPath = normalizePath(resolvedAlias, currentDirectory);
-        }
 
-        if (!resolvedPath) {
-          throw new Error(`Invalid alias config for key: ${resolvedAlias}`);
+          if (!resolvedPath) {
+            throw new Error(`Invalid alias config for key: ${resolvedAlias}`);
+          }
         }
 
         return resolvedPath;
@@ -78,7 +82,7 @@ export default class LessAliasesPlugin {
       );
 
       if (prefixMatch) {
-        let resolvedAliasPrefix = aliasPrefixes[prefixMatch];
+        const resolvedAliasPrefix = aliasPrefixes[prefixMatch];
         if (typeof resolvedAliasPrefix === "function") {
           resolvedPath = normalizePath(
             resolvedAliasPrefix(filename),
@@ -144,12 +148,14 @@ export default class LessAliasesPlugin {
       supportsSync(filename: string, currentDirectory: string) {
         return this.supports(filename, currentDirectory);
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       loadFile(
         filename: string,
         currentDirectory: string,
         options: Record<string, unknown>,
         enviroment: unknown,
+        // eslint-disable-next-line @typescript-eslint/ban-types
         callback: Function
       ) {
         return super.loadFile(
@@ -161,12 +167,14 @@ export default class LessAliasesPlugin {
         );
       }
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       loadFileSync(
         filename: string,
         currentDirectory: string,
         options: Record<string, unknown>,
         enviroment: unknown,
+        // eslint-disable-next-line @typescript-eslint/ban-types
         callback: Function
       ) {
         return super.loadFileSync(
@@ -179,6 +187,7 @@ export default class LessAliasesPlugin {
       }
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     pluginManager.addFileManager(new AliasPlugin());
   }
