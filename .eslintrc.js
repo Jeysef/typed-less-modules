@@ -25,6 +25,5 @@ module.exports = {
     "promise/prefer-await-to-then": "error",
     "jest/consistent-test-it": ["error", { fn: "it" }],
     "jest/no-focused-tests": "off",
-    quotes: ["error", "double"],
   },
 };
