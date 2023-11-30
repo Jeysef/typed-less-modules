@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import yargs from "yargs";
-import { MainOptions } from "./core/types";
+import { MainOptions } from "./core";
 import { Aliases, NAME_FORMATS } from "./less";
 import { main } from "./main";
 import { EXPORT_TYPES, LOG_LEVELS, QUOTE_TYPES } from "./typescript";
@@ -135,4 +135,4 @@ const { _: patterns, ...rest } = yargs
   })
   .parseSync();
 
-main(patterns[0] as string, { ...(rest as Partial<MainOptions>) });
+main(patterns[0] as string, { ...rest } as Partial<MainOptions>);
