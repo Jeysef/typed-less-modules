@@ -4,18 +4,15 @@ import path from "path";
 import { MainOptions, alerts } from "./core";
 import { nameFormatDefault } from "./less";
 import {
-    bannerTypeDefault,
-    exportTypeDefault,
-    exportTypeInterfaceDefault,
-    exportTypeNameDefault,
-    logLevelDefault,
-    quoteTypeDefault,
+  bannerTypeDefault,
+  exportTypeDefault,
+  exportTypeInterfaceDefault,
+  exportTypeNameDefault,
+  logLevelDefault,
+  quoteTypeDefault,
 } from "./typescript";
 
-const VALID_CONFIG_FILES = [
-    "tlm.config.ts",
-    "tlm.config.js",
-];
+const VALID_CONFIG_FILES = ["tlm.config.ts", "tlm.config.js"];
 const joycon = new JoyCon();
 
 /**
@@ -27,56 +24,56 @@ const joycon = new JoyCon();
  *  - `module.exports = {}`
  */
 export const loadConfig = async (): Promise<
-    Record<string, never> | MainOptions
+  Record<string, never> | MainOptions
 > => {
-    const CURRENT_WORKING_DIRECTORY = process.cwd();
+  const CURRENT_WORKING_DIRECTORY = process.cwd();
 
-    const configPath = await joycon.resolve(
-        VALID_CONFIG_FILES,
-        CURRENT_WORKING_DIRECTORY,
-        path.parse(CURRENT_WORKING_DIRECTORY).root
-    );
+  const configPath = await joycon.resolve(
+    VALID_CONFIG_FILES,
+    CURRENT_WORKING_DIRECTORY,
+    path.parse(CURRENT_WORKING_DIRECTORY).root
+  );
 
-    if (configPath) {
-        try {
-            const configModule = await bundleRequire({
-                filepath: configPath,
-            });
+  if (configPath) {
+    try {
+      const configModule = await bundleRequire({
+        filepath: configPath,
+      });
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const config: MainOptions =
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                configModule.mod.config || configModule.mod.default || configModule.mod;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const config: MainOptions =
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        configModule.mod.config || configModule.mod.default || configModule.mod;
 
-            return config;
-        } catch (error) {
-            alerts.error(
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                `An error occurred loading the config file "${configPath}":\n${error}`
-            );
+      return config;
+    } catch (error) {
+      alerts.error(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `An error occurred loading the config file "${configPath}":\n${error}`
+      );
 
-            return {};
-        }
+      return {};
     }
+  }
 
-    return {};
+  return {};
 };
 
 // Default values for all options that need defaults.
 export const DEFAULT_OPTIONS: MainOptions = {
-    nameFormat: [nameFormatDefault],
-    exportType: exportTypeDefault,
-    exportTypeName: exportTypeNameDefault,
-    exportTypeInterface: exportTypeInterfaceDefault,
-    watch: false,
-    ignoreInitial: false,
-    listDifferent: false,
-    ignore: [],
-    quoteType: quoteTypeDefault,
-    updateStaleOnly: false,
-    logLevel: logLevelDefault,
-    banner: bannerTypeDefault,
-    outputFolder: null,
+  nameFormat: [nameFormatDefault],
+  exportType: exportTypeDefault,
+  exportTypeName: exportTypeNameDefault,
+  exportTypeInterface: exportTypeInterfaceDefault,
+  watch: false,
+  ignoreInitial: false,
+  listDifferent: false,
+  ignore: [],
+  quoteType: quoteTypeDefault,
+  updateStaleOnly: false,
+  logLevel: logLevelDefault,
+  banner: bannerTypeDefault,
+  outputFolder: null,
 };
 
 const removedUndefinedValues = <Obj extends Record<string, unknown>>(

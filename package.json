@@ -27,7 +27,7 @@
     "build": "tsc",
     "prepare": "npm run build && husky install",
     "check-types": "tsc --noEmit",
-    "check-formatting": "prettier --check '**/*.{js,json,css,md,less,tsx,ts}'",
+    "check-formatting": "prettier --check **/*.{js,json,css,md,less,tsx,ts}",
     "codecov": "codecov",
     "commit": "commit",
     "ci": "yarn check-types && yarn check-formatting && yarn test",
@@ -36,9 +36,7 @@
   "files": [
     "dist/lib"
   ],
-  "bin": {
-    "tlm": "./dist/lib/cli.js"
-  },
+  "bin": "./dist/lib/cli.js",
   "devDependencies": {
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",

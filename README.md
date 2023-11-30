@@ -248,19 +248,19 @@ module.exports = {
     // 映射至多路径
     "~": [
       path.resolve(__dirname, "node_modules"),
-      path.resolve(__dirname, "src")
+      path.resolve(__dirname, "src"),
     ],
     // 映射至单路径
     "@": path.resolve(__dirname, "some-dir"),
     // 自定义映射规则
     "abc-module"(filePath) {
       return filePath.replace("abc-module", "xxx-path");
-    }
+    },
   },
   // less.render options 参数
   lessRenderOptions: {
-    javascriptEnabled: true
-  }
+    javascriptEnabled: true,
+  },
 };
 ```
 

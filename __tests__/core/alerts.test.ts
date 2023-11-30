@@ -39,7 +39,7 @@ describe("alerts", () => {
     expect(console.log).toBeCalledTimes(4);
 
     alerts.success(TEST_ALERT_MSG);
-    
+
     expect(console.log).toHaveBeenLastCalledWith(EXPECTED);
     expect(console.log).toBeCalledTimes(5);
   });

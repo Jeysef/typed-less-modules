@@ -12,27 +12,27 @@ import { writeFile } from "./write-file";
  * @param options the CLI options
  */
 export const watch = (pattern: string, options: MainOptions): void => {
-    listFilesAndPerformSanityChecks(pattern, options);
+  listFilesAndPerformSanityChecks(pattern, options);
 
-    alerts.success("Watching files...");
+  alerts.success("Watching files...");
 
-    chokidar
-        .watch(pattern, {
-            ignoreInitial: options.ignoreInitial,
-            ignored: options.ignore,
-        })
-        .on("change", (path) => {
-            alerts.info(`[CHANGED] ${path}`);
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            writeFile(path, options);
-        })
-        .on("add", (path) => {
-            alerts.info(`[ADDED] ${path}`);
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            writeFile(path, options);
-        })
-        .on("unlink", (path) => {
-            alerts.info(`[REMOVED] ${path}`);
-            removeLESSTypeDefinitionFile(path, options);
-        });
+  chokidar
+    .watch(pattern, {
+      ignoreInitial: options.ignoreInitial,
+      ignored: options.ignore,
+    })
+    .on("change", (path) => {
+      alerts.info(`[CHANGED] ${path}`);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      writeFile(path, options);
+    })
+    .on("add", (path) => {
+      alerts.info(`[ADDED] ${path}`);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      writeFile(path, options);
+    })
+    .on("unlink", (path) => {
+      alerts.info(`[REMOVED] ${path}`);
+      removeLESSTypeDefinitionFile(path, options);
+    });
 };

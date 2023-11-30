@@ -1,7 +1,7 @@
 import fs, { PathOrFileDescriptor } from "fs";
 import path from "path";
-import { writeFile } from "../../lib/core";
 import slash from "slash";
+import { writeFile } from "../../lib/core";
 
 describe("writeFile", () => {
   beforeEach(() => {
@@ -35,10 +35,9 @@ describe("writeFile", () => {
       outputFolder: null,
     });
 
-    const expectedPath = slash(path.join(
-      process.cwd(),
-      "__tests__/dummy-styles/style.less.d.ts"
-    ));
+    const expectedPath = slash(
+      path.join(process.cwd(), "__tests__/dummy-styles/style.less.d.ts")
+    );
 
     expect(fs.writeFileSync).toHaveBeenCalledWith(
       expectedPath,
@@ -50,7 +49,9 @@ describe("writeFile", () => {
   });
 
   it("skips files with no classes", async () => {
-    const testFile = slash(path.resolve(__dirname, "..", "dummy-styles/empty.less"));
+    const testFile = slash(
+      path.resolve(__dirname, "..", "dummy-styles/empty.less")
+    );
 
     await writeFile(testFile, {
       banner: "",
@@ -74,11 +75,12 @@ describe("writeFile", () => {
   });
 
   describe("when a file already exists with type definitions", () => {
-    const testFile = slash(path.resolve(__dirname, "..", "dummy-styles/empty.less"));
-    const existingTypes = slash(path.join(
-      process.cwd(),
-      "__tests__/dummy-styles/empty.less.d.ts"
-    ));
+    const testFile = slash(
+      path.resolve(__dirname, "..", "dummy-styles/empty.less")
+    );
+    const existingTypes = slash(
+      path.join(process.cwd(), "__tests__/dummy-styles/empty.less.d.ts")
+    );
     const originalExistsSync = fs.existsSync;
 
     beforeEach(() => {
@@ -118,7 +120,9 @@ describe("writeFile", () => {
 
   describe("when outputFolder is passed", () => {
     it("should write to the correct path", async () => {
-      const testFile = slash(path.resolve(__dirname, "..", "dummy-styles/style.less"));
+      const testFile = slash(
+        path.resolve(__dirname, "..", "dummy-styles/style.less")
+      );
 
       await writeFile(testFile, {
         banner: "",
@@ -135,10 +139,12 @@ describe("writeFile", () => {
         outputFolder: "__generated__",
       });
 
-      const expectedPath = slash(path.join(
-        process.cwd(),
-        "__generated__/__tests__/dummy-styles/style.less.d.ts"
-      ));
+      const expectedPath = slash(
+        path.join(
+          process.cwd(),
+          "__generated__/__tests__/dummy-styles/style.less.d.ts"
+        )
+      );
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         expectedPath,
@@ -152,11 +158,12 @@ describe("writeFile", () => {
 
   describe("when --updateStaleOnly is passed", () => {
     const originalReadFileSync = fs.readFileSync;
-    const testFile = slash(path.resolve(__dirname, "..", "dummy-styles/style.less"));
-    const expectedPath = slash(path.join(
-      process.cwd(),
-      "__tests__/dummy-styles/style.less.d.ts"
-    ));
+    const testFile = slash(
+      path.resolve(__dirname, "..", "dummy-styles/style.less")
+    );
+    const expectedPath = slash(
+      path.join(process.cwd(), "__tests__/dummy-styles/style.less.d.ts")
+    );
 
     beforeEach(() => {
       jest.spyOn(fs, "statSync");

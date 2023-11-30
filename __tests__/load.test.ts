@@ -71,7 +71,6 @@ describe("#mergeOptions", () => {
   });
 
   it("should allow overriding all default options via the config options", () => {
-
     expect(
       mergeOptions(
         {},
@@ -109,7 +108,6 @@ describe("#mergeOptions", () => {
   });
 
   it("should give precedence to CLI options and still merge config-only options", () => {
-
     expect(
       mergeOptions(
         {
@@ -161,7 +159,6 @@ describe("#mergeOptions", () => {
   });
 
   it("should give ignore undefined CLI options", () => {
-
     expect(
       mergeOptions(
         {

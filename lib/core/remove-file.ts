@@ -10,16 +10,16 @@ import { alerts } from "./alerts";
  */
 
 const removeFile = (file: string): void => {
-    try {
-        if (fs.existsSync(file)) {
-            fs.unlinkSync(file);
-            alerts.success(`[REMOVED] ${file}`);
-        }
-    } catch (error) {
-        alerts.error(
-            `An error occurred removing ${file}:\n${JSON.stringify(error)}`
-        );
+  try {
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file);
+      alerts.success(`[REMOVED] ${file}`);
     }
+  } catch (error) {
+    alerts.error(
+      `An error occurred removing ${file}:\n${JSON.stringify(error)}`
+    );
+  }
 };
 
 /**
@@ -28,9 +28,9 @@ const removeFile = (file: string): void => {
  * @param file the LESS file to generate types for
  */
 export const removeLESSTypeDefinitionFile = (
-    file: string,
-    options: MainOptions
+  file: string,
+  options: MainOptions
 ): void => {
-    const path = getTypeDefinitionPath(file, options);
-    removeFile(path);
+  const path = getTypeDefinitionPath(file, options);
+  removeFile(path);
 };

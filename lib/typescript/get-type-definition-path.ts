@@ -1,6 +1,6 @@
 import path from "path";
-import { MainOptions } from "../core";
 import slash from "slash";
+import { MainOptions } from "../core";
 
 const CURRENT_WORKING_DIRECTORY = process.cwd();
 

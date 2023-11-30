@@ -1,4 +1,4 @@
-import styles, { Styles, ClassNames } from "./style.less";
+import styles, { ClassNames, Styles } from "./style.less";
 
 console.log(styles.i);
 console.log(styles["i-am-kebab-cased"]);
@@ -8,6 +8,6 @@ const className: ClassNames = "i-am-kebab-cased";
 
 // Using the Styles type for reconstructing a subset.
 export const classNames: Partial<Styles> = {
-    [className]: "something",
-    i: "a-string",
+  [className]: "something",
+  i: "a-string",
 };
