@@ -217,16 +217,16 @@ describe("fileToClassNames", () => {
     });
   });
 
-  //   describe("additionalData", () => {
-  //     it("adds additional data to enable adding any necessary context", async () => {
-  //       const result = await fileToClassNames(
-  //         `${__dirname}/../dummy-styles/global-variables.less`,
-  //         {
-  //           additionalData: "$global-red: red;",
-  //         }
-  //       );
+    describe("additionalData", () => {
+      it("adds additional data to enable adding any necessary context", async () => {
+        const result = await fileToClassNames(
+          `${__dirname}/../dummy-styles/global-variables.less`,
+          {
+            additionalData: "@global-red: red;",
+          }
+        );
 
-  //       expect(result).toEqual(["globalStyle"]);
-  //     });
-  //   });
+        expect(result).toEqual(["globalStyle"]);
+      });
+    });
 });

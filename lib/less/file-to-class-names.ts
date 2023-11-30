@@ -7,6 +7,7 @@ import {
 import fs from "fs";
 import { render } from "less";
 import { MainOptions } from "lib/core";
+import os from "os";
 import path from "path";
 import slash from "slash";
 import LessAliasesPlugin from "./aliases-plugin";
@@ -41,6 +42,7 @@ export const NAME_FORMATS = [...NAME_FORMATS_WITH_TRANSFORMER, "all"] as const;
 export type NameFormat = (typeof NAME_FORMATS)[number];
 
 export interface LESSOptions {
+  additionalData?: string;
   includePaths?: string[];
   aliases?: Aliases;
   aliasPrefixes?: Aliases;
@@ -69,18 +71,23 @@ export const fileToClassNames = async (
     : [nameFormatDefault];
 
   const fileContent = fs.readFileSync(file).toString();
-  const result = await render(fileContent, {
-    filename: slash(path.resolve(file)),
-    paths: includePaths,
-    syncImport: true,
-    plugins: [
-      new LessAliasesPlugin({
-        aliasPrefixes: options.aliasPrefixes,
-        aliases,
-      }),
-    ],
-    ...lessRenderOptions,
-  });
+  const result = await render(
+    options.additionalData
+      ? `${options.additionalData}${os.EOL}${fileContent}`
+      : fileContent,
+    {
+      filename: slash(path.resolve(file)),
+      paths: includePaths,
+      syncImport: true,
+      plugins: [
+        new LessAliasesPlugin({
+          aliasPrefixes: options.aliasPrefixes,
+          aliases,
+        }),
+      ],
+      ...lessRenderOptions,
+    }
+  );
 
   const classNames = await sourceToClassNames(result.css, file);
   const transformers = nameFormats.map((item) => transformersMap[item]);

@@ -39,7 +39,7 @@ describe("main", () => {
       quoteType: "single",
       updateStaleOnly: false,
       logLevel: "verbose",
-      // additionalData: "$global-red: red;",
+      additionalData: "@global-red: red;",
       aliases: {
         "~fancy-import": "complex",
         "~another": "style",
@@ -79,7 +79,7 @@ describe("main", () => {
       quoteType: "single",
       updateStaleOnly: false,
       logLevel: "verbose",
-    //   additionalData: "$global-red: red;",
+      additionalData: "@global-red: red;",
       aliases: {
         "~fancy-import": "complex",
         "~another": "style",
@@ -116,7 +116,7 @@ describe("main", () => {
     jest.spyOn(process, "cwd").mockReturnValue(path.resolve(pattern));
 
     await main(pattern, {
-      //   additionalData: "$global-red: red;",
+      additionalData: "@global-red: red;",
       aliases: {
         "~fancy-import": "complex",
         "~another": "style",
@@ -146,7 +146,7 @@ describe("main", () => {
     const pattern = path.resolve(__dirname, "dummy-styles");
 
     await main(pattern, {
-      // additionalData: "$global-red: red;",
+      additionalData: "@global-red: red;",
       aliases: {
         "~fancy-import": "complex",
         "~another": "style",
