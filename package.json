@@ -36,7 +36,9 @@
   "files": [
     "dist/lib"
   ],
-  "bin": "./dist/lib/cli.js",
+  "bin": {
+    "tlm": "./dist/lib/cli.js"
+  },
   "devDependencies": {
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
