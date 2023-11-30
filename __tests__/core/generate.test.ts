@@ -26,6 +26,6 @@ describe("generate", () => {
       outputFolder: null,
     });
 
-    expect(fs.writeFileSync).toHaveBeenCalledTimes(7);
+    expect(fs.writeFileSync).toHaveBeenCalledTimes(6);
   });
 });
