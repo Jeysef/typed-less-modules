@@ -1,3 +1,9 @@
+## [0.2.1](https://github.com/Jeysef/typed-less-modules/compare/v0.2.0...v0.2.1) (2023-12-01)
+
+### Bug Fixes
+
+- empty commit to trigger npm package release ([4f88c20](https://github.com/Jeysef/typed-less-modules/commit/4f88c2005f71c9d1f5b4413b9f15f734933a801c))
+
 # [0.2.0](https://github.com/Jeysef/typed-less-modules/compare/v0.1.3...v0.2.0) (2023-12-01)
 
 ### Bug Fixes
