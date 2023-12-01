@@ -384,6 +384,6 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Alternatives
 
-This package was forked from [typed-scss-modules](https://github.com/skovy/typed-scss-modules).
+This package was forked from [typed-scss-modules](https://github.com/skovy/typed-scss-modules) and is combination of [typed-scss-modules](https://github.com/skovy/typed-scss-modules) and [typed-less-modules](https://github.com/qiniu/typed-less-modules).
 
 This package is currently used as a CLI. There are also [packages that generate types as a webpack loader](https://github.com/Jimdo/typings-for-css-modules-loader).
