@@ -7,6 +7,8 @@
  */
 
 import fs from "fs";
+import path from "path";
+import slash from "slash";
 import { Aliases } from "./file-to-class-names";
 
 interface Logger {
@@ -23,7 +25,7 @@ function normalizePath(filename: string, currentDirectory: string) {
 
   for (let i = 0, len = checkExtList.length; i < len; i++) {
     const ext = checkExtList[i];
-    if (fs.existsSync(`${currentDirectory}${filename}${ext}`)) {
+    if (fs.existsSync(slash(path.join(currentDirectory, filename + ext)))) {
       return `${filename}${ext}`;
     }
   }
