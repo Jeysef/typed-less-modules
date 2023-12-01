@@ -1,3 +1,9 @@
+## [0.2.3](https://github.com/Jeysef/typed-less-modules/compare/v0.2.2...v0.2.3) (2023-12-01)
+
+### Bug Fixes
+
+- empty commit to trigger publish ([d443fcc](https://github.com/Jeysef/typed-less-modules/commit/d443fccf315db2774f5290fb7b3b055721d832fd))
+
 ## [0.2.2](https://github.com/Jeysef/typed-less-modules/compare/v0.2.1...v0.2.2) (2023-12-01)
 
 ### Bug Fixes
