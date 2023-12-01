@@ -1,6 +1,6 @@
 {
   "name": "typed-less-modules",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "TypeScript type definition generator for LESS CSS Modules",
   "main": "index.js",
   "license": "MIT",
