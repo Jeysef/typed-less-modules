@@ -1,4 +1,5 @@
 import fs from "fs";
+import slash from "slash";
 import { generate } from "../../lib/core";
 
 describe("generate", () => {
@@ -9,7 +10,7 @@ describe("generate", () => {
   });
 
   it("generates types for all files matching the pattern", async () => {
-    const pattern = `${__dirname}/../dummy-styles/**/*.less`;
+    const pattern = slash(`${__dirname}/../dummy-styles/**/*.less`);
 
     await generate(pattern, {
       banner: "",

@@ -83,6 +83,7 @@ export const fileToClassNames = async (
         new LessAliasesPlugin({
           aliasPrefixes: options.aliasPrefixes,
           aliases,
+          includePaths,
         }),
       ],
       ...lessRenderOptions,

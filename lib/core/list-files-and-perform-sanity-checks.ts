@@ -1,4 +1,4 @@
-import glob from "glob";
+import { glob } from "glob";
 import { alerts } from "./alerts";
 import { MainOptions } from "./types";
 

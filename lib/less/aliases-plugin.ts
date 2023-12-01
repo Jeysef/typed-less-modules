@@ -32,6 +32,7 @@ interface Options {
   aliasPrefixes?: Aliases;
   aliases: Aliases;
   logger?: Logger;
+  includePaths?: string[];
 }
 
 const defaultLogger = {
@@ -47,6 +48,7 @@ export default class LessAliasesPlugin {
       aliasPrefixes = {},
       aliases = {},
       logger = defaultLogger,
+      includePaths = [],
     } = this.options;
 
     function resolve(
@@ -59,7 +61,22 @@ export default class LessAliasesPlugin {
         const resolvedAlias = aliases[filename];
         if (typeof resolvedAlias === "function") {
           const resolvedAliasString = resolvedAlias(filename);
+
           resolvedPath = normalizePath(resolvedAliasString, currentDirectory);
+
+          if (!resolvedPath) {
+            console.log(
+              "🚀 ~ file: aliases-plugin.ts:75 ~ LessAliasesPlugin ~ includePaths.some ~ includePaths:",
+              includePaths
+            );
+            includePaths.some((includePath) => {
+              resolvedPath = normalizePath(
+                resolvedAliasString,
+                `${process.cwd()}/${includePath}/`
+              );
+              return !!resolvedPath;
+            });
+          }
 
           if (!resolvedPath) {
             throw new Error(
@@ -68,6 +85,20 @@ export default class LessAliasesPlugin {
           }
         } else {
           resolvedPath = normalizePath(resolvedAlias, currentDirectory);
+
+          if (!resolvedPath) {
+            console.log(
+              "🚀 ~ file: aliases-plugin.ts:91 ~ LessAliasesPlugin ~ includePaths.some ~ includePaths:",
+              includePaths
+            );
+            includePaths.some((includePath) => {
+              resolvedPath = normalizePath(
+                resolvedAlias,
+                `${process.cwd()}/${includePath}/`
+              );
+              return !!resolvedPath;
+            });
+          }
 
           if (!resolvedPath) {
             throw new Error(`Invalid alias config for key: ${resolvedAlias}`);
