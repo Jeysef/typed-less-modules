@@ -1,8 +1,9 @@
 // fork form https://github.com/dancon/less-plugin-aliases
 /**
- * @fileoverview the plugin for less to support custom aliase
+ * @fileoverview the plugin for less to support custom aliases
  * @author houquan | 870301137@qq.com
- * @version 1.0.0 | 2020-03-15 | houquan      // initial version
+ * @author Jeysef
+ * @version 2.0.0 | 2023-12-01 | Jeysef
  */
 
 import fs from "fs";
