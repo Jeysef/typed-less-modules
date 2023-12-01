@@ -1,3 +1,9 @@
+# [0.3.0](https://github.com/Jeysef/typed-less-modules/compare/v0.2.3...v0.3.0) (2023-12-01)
+
+### Features
+
+- **package.json:** name ([c337100](https://github.com/Jeysef/typed-less-modules/commit/c337100ec0244d9228c1ae272d4ab98280214c3c))
+
 ## [0.2.3](https://github.com/Jeysef/typed-less-modules/compare/v0.2.2...v0.2.3) (2023-12-01)
 
 ### Bug Fixes
