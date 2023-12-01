@@ -1,3 +1,9 @@
+## [0.2.2](https://github.com/Jeysef/typed-less-modules/compare/v0.2.1...v0.2.2) (2023-12-01)
+
+### Bug Fixes
+
+- rename package.json name ([532eed9](https://github.com/Jeysef/typed-less-modules/commit/532eed9900b0d38170e77e56541f53ee707ceb0e))
+
 ## [0.2.1](https://github.com/Jeysef/typed-less-modules/compare/v0.2.0...v0.2.1) (2023-12-01)
 
 ### Bug Fixes
